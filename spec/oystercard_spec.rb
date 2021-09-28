@@ -2,6 +2,8 @@ require 'oystercard'
 
 describe Oystercard do
 
+  let(:entry_station) { instance_double Oystercard, entry_station: "Kent House" }
+  
   it "has balance of 0 by default" do
     expect(subject.balance).to eq 0
   end 
@@ -25,7 +27,7 @@ describe Oystercard do
 
   it "returns true when the customer touches in" do
     subject.balance = 2
-    subject.touch_in
+    subject.touch_in(:entry_station)
     expect(subject.in_use).to be_truthy
   end
 
@@ -41,7 +43,7 @@ describe Oystercard do
 
   it "confirms when the customer is on a journey" do
     subject.balance = Oystercard::MINIMUM
-    subject.touch_in
+    subject.touch_in(:entry_station)
     expect(subject.in_journey?).to be_truthy
   end
 
@@ -52,7 +54,13 @@ describe Oystercard do
 
   it "raises an error if the balance is less than £1 on touch in" do
     subject.balance = 0
-    expect { subject.touch_in }.to raise_error "You do not have sufficient funds to make this journey"
+    expect { subject.touch_in(:entry_station) }.to raise_error "You do not have sufficient funds to make this journey"
+  end
+
+  it "returns touch in station" do
+    subject.balance = 5
+    subject.touch_in("Kent House")
+    expect(subject.entry_station).to eq "Kent House"
   end
   
 end
