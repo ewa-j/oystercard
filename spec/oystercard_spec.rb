@@ -18,7 +18,8 @@ describe Oystercard do
 
   it "reduces the balance" do
     subject.balance = 70
-    subject.deduct(10)
+    # method to test private method in rspec
+    subject.send(:deduct, 10)
     expect(subject.balance).to eq 60
   end
 
@@ -33,8 +34,13 @@ describe Oystercard do
     expect(subject.in_use).to be_falsy
   end
 
+  it "deducts money for completed journey" do
+    subject.balance = 5
+    expect { subject.touch_out }.to change { subject.balance }.by(-1)
+  end
+
   it "confirms when the customer is on a journey" do
-    subject.balance = 2
+    subject.balance = Oystercard::MINIMUM
     subject.touch_in
     expect(subject.in_journey?).to be_truthy
   end
