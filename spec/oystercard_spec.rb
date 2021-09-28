@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do
 
   let(:entry_station) { instance_double Oystercard, entry_station: "Kent House" }
+  let(:exit_station) { instance_double Oystercard, exit_station: "Victoria" }
   
   it "has balance of 0 by default" do
     expect(subject.balance).to eq 0
@@ -32,13 +33,13 @@ describe Oystercard do
   end
 
   it "returns false when the customer touches out" do
-    subject.touch_out
+    subject.touch_out(:exit_station)
     expect(subject.in_use).to be_falsy
   end
 
   it "deducts money for completed journey" do
     subject.balance = 5
-    expect { subject.touch_out }.to change { subject.balance }.by(-1)
+    expect { subject.touch_out(:exit_station) }.to change { subject.balance }.by(-1)
   end
 
   it "confirms when the customer is on a journey" do
@@ -48,7 +49,7 @@ describe Oystercard do
   end
 
   it "confirms when the customer has finished their journey" do
-    subject.touch_out
+    subject.touch_out(:exit_station)
     expect(subject.in_journey?).to be_falsy
   end
 
@@ -61,6 +62,22 @@ describe Oystercard do
     subject.balance = 5
     subject.touch_in("Kent House")
     expect(subject.entry_station).to eq "Kent House"
+  end
+
+  it "returns exit station" do
+    subject.touch_out("Victoria")
+    expect(subject.exit_station).to eq "Victoria"
+  end
+
+  it "has an empty @journeys array by default" do
+    expect(subject.journeys).to eq []
+  end
+
+  it "creates one journey after touch_in & touch_out" do
+    subject.balance = 10
+    subject.touch_in(:entry_station)
+    subject.touch_out(:exit_station)
+    expect(subject.journeys.length).to eq 1
   end
   
 end
