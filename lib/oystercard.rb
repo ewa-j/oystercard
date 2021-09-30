@@ -1,17 +1,15 @@
 class Oystercard
 
-  attr_accessor :balance, :in_use, :entry_station, :exit_station, :journeys
+  attr_accessor :balance, :journeys, :entry_station, :exit_station, :current_journey
  
   LIMIT = 90
   MINIMUM = 1
 
-  def initialize
+  def initialize(journey = Journey.new)
     @balance = 0
-    @in_use = false
-    @entry_station = nil
-    @exit_station = nil
     @journeys = []
-    @journey_hash = {}
+    @journey = journey
+    @current_journey = nil
   end
 
   def top_up(amount)
@@ -21,23 +19,27 @@ class Oystercard
 
   def touch_in(entry_station)
     raise "You do not have sufficient funds to make this journey" if balance < MINIMUM
-    self.in_use = true
-    @entry_station = entry_station
-    @journey_hash.clear()
-    @journey_hash[:entry] = @entry_station
+    @journey.start(entry_station)
   end
 
   def touch_out(exit_station)
-    self.in_use = false
+    @journey.finish(entry_station)
     self.deduct(1)
-    @exit_station = exit_station
-    @journey_hash[:exit] = @exit_station
-    @journeys << @journey_hash
+    add_journey
   end
 
   def in_journey?
     entry_station == nil ? false : true
-    self.in_use #? true : false
+  end
+
+  def add_journey
+    @current_journey = {entry: @journey.entry_station, exit: @journey.exit_station}
+    @journeys << current_journey
+    clear_journey
+  end
+
+  def clear_journey
+    journey = Journey.new
   end
 
   private
