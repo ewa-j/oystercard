@@ -28,9 +28,9 @@ describe Oystercard do
     expect(subject.balance).to eq 60
   end
 
-  it "deducts money for completed journey" do
-    subject.balance = 5
-    expect { subject.touch_out(:exit_station) }.to change { subject.balance }.by(-1)
+  it "deducts penalty fare if not touched in" do
+    subject.balance = 10
+    expect { subject.touch_out(:exit_station) }.to change { subject.balance }.by(-6)
   end
 
   it "raises an error if the balance is less than £1 on touch in" do

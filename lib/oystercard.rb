@@ -24,7 +24,7 @@ class Oystercard
 
   def touch_out(exit_station)
     @journey.finish(entry_station)
-    self.deduct(MINIMUM)
+    self.deduct(@journey.fare)
     add_journey
   end
 
