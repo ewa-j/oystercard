@@ -33,17 +33,6 @@ describe Oystercard do
     expect { subject.touch_out(:exit_station) }.to change { subject.balance }.by(-1)
   end
 
-  # it "confirms when the customer is on a journey" do
-  #   subject.balance = Oystercard::MINIMUM
-  #   subject.touch_in(:entry_station)
-  #   expect(subject.in_journey?).to be_truthy
-  # end
-
-  # it "confirms when the customer has finished their journey" do
-  #   subject.touch_out(:exit_station)
-  #   expect(subject.in_journey?).to be_falsy
-  # end
-
   it "raises an error if the balance is less than £1 on touch in" do
     subject.balance = 0
     expect { subject.touch_in(:entry_station) }.to raise_error "You do not have sufficient funds to make this journey"

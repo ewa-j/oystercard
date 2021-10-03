@@ -24,12 +24,8 @@ class Oystercard
 
   def touch_out(exit_station)
     @journey.finish(entry_station)
-    self.deduct(1)
+    self.deduct(MINIMUM)
     add_journey
-  end
-
-  def in_journey?
-    entry_station == nil ? false : true
   end
 
   def add_journey
